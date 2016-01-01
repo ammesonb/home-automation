@@ -1,0 +1,819 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: actions; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE actions (
+    id integer NOT NULL,
+    action character varying NOT NULL,
+    function character varying NOT NULL
+);
+
+
+ALTER TABLE public.actions OWNER TO brett;
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE actions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.actions_id_seq OWNER TO brett;
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE actions_id_seq OWNED BY actions.id;
+
+
+--
+-- Name: associations; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE associations (
+    id integer NOT NULL,
+    name character varying NOT NULL
+);
+
+
+ALTER TABLE public.associations OWNER TO brett;
+
+--
+-- Name: associations_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE associations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.associations_id_seq OWNER TO brett;
+
+--
+-- Name: associations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE associations_id_seq OWNED BY associations.id;
+
+
+--
+-- Name: chain_actions; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE chain_actions (
+    id integer NOT NULL,
+    chain integer NOT NULL,
+    action integer NOT NULL,
+    seq integer NOT NULL
+);
+
+
+ALTER TABLE public.chain_actions OWNER TO brett;
+
+--
+-- Name: chain_actions_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE chain_actions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.chain_actions_id_seq OWNER TO brett;
+
+--
+-- Name: chain_actions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE chain_actions_id_seq OWNED BY chain_actions.id;
+
+
+--
+-- Name: chains; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE chains (
+    id integer NOT NULL,
+    chain character varying NOT NULL
+);
+
+
+ALTER TABLE public.chains OWNER TO brett;
+
+--
+-- Name: chains_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE chains_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.chains_id_seq OWNER TO brett;
+
+--
+-- Name: chains_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE chains_id_seq OWNED BY chains.id;
+
+
+--
+-- Name: clarifications; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE clarifications (
+    id integer NOT NULL,
+    phrase character varying NOT NULL,
+    association integer NOT NULL,
+    formality integer NOT NULL
+);
+
+
+ALTER TABLE public.clarifications OWNER TO brett;
+
+--
+-- Name: clarifications_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE clarifications_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.clarifications_id_seq OWNER TO brett;
+
+--
+-- Name: clarifications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE clarifications_id_seq OWNED BY clarifications.id;
+
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE events (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    chain integer NOT NULL
+);
+
+
+ALTER TABLE public.events OWNER TO brett;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.events_id_seq OWNER TO brett;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE events_id_seq OWNED BY events.id;
+
+
+--
+-- Name: formalities; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE formalities (
+    id integer NOT NULL,
+    level character varying NOT NULL
+);
+
+
+ALTER TABLE public.formalities OWNER TO brett;
+
+--
+-- Name: formalities_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE formalities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.formalities_id_seq OWNER TO brett;
+
+--
+-- Name: formalities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE formalities_id_seq OWNED BY formalities.id;
+
+
+--
+-- Name: repeat; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE repeat (
+    id integer NOT NULL,
+    phrase character varying NOT NULL,
+    formality integer NOT NULL
+);
+
+
+ALTER TABLE public.repeat OWNER TO brett;
+
+--
+-- Name: repeat_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE repeat_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.repeat_id_seq OWNER TO brett;
+
+--
+-- Name: repeat_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE repeat_id_seq OWNED BY repeat.id;
+
+
+--
+-- Name: responses; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE responses (
+    id integer NOT NULL,
+    phrase character varying NOT NULL,
+    is_affirmative character varying[] NOT NULL,
+    formality integer NOT NULL
+);
+
+
+ALTER TABLE public.responses OWNER TO brett;
+
+--
+-- Name: responses_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE responses_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.responses_id_seq OWNER TO brett;
+
+--
+-- Name: responses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE responses_id_seq OWNED BY responses.id;
+
+
+--
+-- Name: rooms; Type: TABLE; Schema: public; Owner: brett; Tablespace: 
+--
+
+CREATE TABLE rooms (
+    id integer NOT NULL,
+    room character varying NOT NULL
+);
+
+
+ALTER TABLE public.rooms OWNER TO brett;
+
+--
+-- Name: rooms_id_seq; Type: SEQUENCE; Schema: public; Owner: brett
+--
+
+CREATE SEQUENCE rooms_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rooms_id_seq OWNER TO brett;
+
+--
+-- Name: rooms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brett
+--
+
+ALTER SEQUENCE rooms_id_seq OWNED BY rooms.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY actions ALTER COLUMN id SET DEFAULT nextval('actions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY associations ALTER COLUMN id SET DEFAULT nextval('associations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY chain_actions ALTER COLUMN id SET DEFAULT nextval('chain_actions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY chains ALTER COLUMN id SET DEFAULT nextval('chains_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY clarifications ALTER COLUMN id SET DEFAULT nextval('clarifications_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY formalities ALTER COLUMN id SET DEFAULT nextval('formalities_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY repeat ALTER COLUMN id SET DEFAULT nextval('repeat_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY responses ALTER COLUMN id SET DEFAULT nextval('responses_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY rooms ALTER COLUMN id SET DEFAULT nextval('rooms_id_seq'::regclass);
+
+
+--
+-- Data for Name: actions; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY actions (id, action, function) FROM stdin;
+\.
+
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('actions_id_seq', 1, false);
+
+
+--
+-- Data for Name: associations; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY associations (id, name) FROM stdin;
+1	any
+2	numeric
+\.
+
+
+--
+-- Name: associations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('associations_id_seq', 2, true);
+
+
+--
+-- Data for Name: chain_actions; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY chain_actions (id, chain, action, seq) FROM stdin;
+\.
+
+
+--
+-- Name: chain_actions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('chain_actions_id_seq', 1, false);
+
+
+--
+-- Data for Name: chains; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY chains (id, chain) FROM stdin;
+\.
+
+
+--
+-- Name: chains_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('chains_id_seq', 1, false);
+
+
+--
+-- Data for Name: clarifications; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY clarifications (id, phrase, association, formality) FROM stdin;
+\.
+
+
+--
+-- Name: clarifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('clarifications_id_seq', 1, false);
+
+
+--
+-- Data for Name: events; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY events (id, name, chain) FROM stdin;
+\.
+
+
+--
+-- Name: events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('events_id_seq', 1, false);
+
+
+--
+-- Data for Name: formalities; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY formalities (id, level) FROM stdin;
+1	Conversational
+2	Casual
+3	Polite
+4	Formal
+5	British
+\.
+
+
+--
+-- Name: formalities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('formalities_id_seq', 5, true);
+
+
+--
+-- Data for Name: repeat; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY repeat (id, phrase, formality) FROM stdin;
+\.
+
+
+--
+-- Name: repeat_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('repeat_id_seq', 1, false);
+
+
+--
+-- Data for Name: responses; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY responses (id, phrase, is_affirmative, formality) FROM stdin;
+\.
+
+
+--
+-- Name: responses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('responses_id_seq', 1, false);
+
+
+--
+-- Data for Name: rooms; Type: TABLE DATA; Schema: public; Owner: brett
+--
+
+COPY rooms (id, room) FROM stdin;
+\.
+
+
+--
+-- Name: rooms_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
+--
+
+SELECT pg_catalog.setval('rooms_id_seq', 1, false);
+
+
+--
+-- Name: actions_action_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_action_key UNIQUE (action);
+
+
+--
+-- Name: actions_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: associations_name_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY associations
+    ADD CONSTRAINT associations_name_key UNIQUE (name);
+
+
+--
+-- Name: associations_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY associations
+    ADD CONSTRAINT associations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: chain_actions_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY chain_actions
+    ADD CONSTRAINT chain_actions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: chains_chain_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY chains
+    ADD CONSTRAINT chains_chain_key UNIQUE (chain);
+
+
+--
+-- Name: chains_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY chains
+    ADD CONSTRAINT chains_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: clarifications_phrase_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY clarifications
+    ADD CONSTRAINT clarifications_phrase_key UNIQUE (phrase);
+
+
+--
+-- Name: clarifications_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY clarifications
+    ADD CONSTRAINT clarifications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events_name_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_name_key UNIQUE (name);
+
+
+--
+-- Name: events_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: formalities_level_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY formalities
+    ADD CONSTRAINT formalities_level_key UNIQUE (level);
+
+
+--
+-- Name: formalities_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY formalities
+    ADD CONSTRAINT formalities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: repeat_phrase_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY repeat
+    ADD CONSTRAINT repeat_phrase_key UNIQUE (phrase);
+
+
+--
+-- Name: repeat_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY repeat
+    ADD CONSTRAINT repeat_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: responses_phrase_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY responses
+    ADD CONSTRAINT responses_phrase_key UNIQUE (phrase);
+
+
+--
+-- Name: responses_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY responses
+    ADD CONSTRAINT responses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rooms_pkey; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY rooms
+    ADD CONSTRAINT rooms_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rooms_room_key; Type: CONSTRAINT; Schema: public; Owner: brett; Tablespace: 
+--
+
+ALTER TABLE ONLY rooms
+    ADD CONSTRAINT rooms_room_key UNIQUE (room);
+
+
+--
+-- Name: chain_actions_action_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY chain_actions
+    ADD CONSTRAINT chain_actions_action_fkey FOREIGN KEY (action) REFERENCES actions(id);
+
+
+--
+-- Name: chain_actions_chain_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY chain_actions
+    ADD CONSTRAINT chain_actions_chain_fkey FOREIGN KEY (chain) REFERENCES chains(id);
+
+
+--
+-- Name: clarifications_association_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY clarifications
+    ADD CONSTRAINT clarifications_association_fkey FOREIGN KEY (association) REFERENCES associations(id);
+
+
+--
+-- Name: clarifications_formality_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY clarifications
+    ADD CONSTRAINT clarifications_formality_fkey FOREIGN KEY (formality) REFERENCES formalities(id);
+
+
+--
+-- Name: events_chain_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_chain_fkey FOREIGN KEY (chain) REFERENCES chains(id);
+
+
+--
+-- Name: repeat_formality_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY repeat
+    ADD CONSTRAINT repeat_formality_fkey FOREIGN KEY (formality) REFERENCES formalities(id);
+
+
+--
+-- Name: responses_formality_fkey; Type: FK CONSTRAINT; Schema: public; Owner: brett
+--
+
+ALTER TABLE ONLY responses
+    ADD CONSTRAINT responses_formality_fkey FOREIGN KEY (formality) REFERENCES formalities(id);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
