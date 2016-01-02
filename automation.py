@@ -120,4 +120,9 @@ while True:
     checkTimeouts()
     # TODO should this be threaded?
     # Then maybe interrupts could be used instead of sleep?
+        # Shared DB connection? Bad?
+        # Conflicting choices - events and words, for instance?
+        # Shared variables such as timeouts?
+        # For hopefully-fast logic/decisions, is it really worth the overhead?
+
     sleep(MAIN_LOOP_DELAY)
