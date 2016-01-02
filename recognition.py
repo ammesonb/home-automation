@@ -15,3 +15,20 @@ class ConvMode(enum.Enum):
     # This can time out safely
     FINISHING = 5
 
+def initSphinx():
+    """
+    Start CMU Sphinx recognizer/integration
+    """
+    pass
+
+def getSpeech():
+    """
+    Responsible for returning a phrase from the CMU Sphinx voice recognition
+    software
+    """
+    # TODO CMU sphinx integration here
+    # Will it block?
+    phrase = 'some string'
+    # TODO May need to append text instead of parsing as is - how to tell?
+    # Just collect a few seconds of text?
+    return phrase

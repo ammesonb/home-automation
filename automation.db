@@ -814,6 +814,106 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
+-- Name: actions; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE actions FROM PUBLIC;
+REVOKE ALL ON TABLE actions FROM brett;
+GRANT ALL ON TABLE actions TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE actions TO "home-automation";
+
+
+--
+-- Name: associations; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE associations FROM PUBLIC;
+REVOKE ALL ON TABLE associations FROM brett;
+GRANT ALL ON TABLE associations TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE associations TO "home-automation";
+
+
+--
+-- Name: chain_actions; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE chain_actions FROM PUBLIC;
+REVOKE ALL ON TABLE chain_actions FROM brett;
+GRANT ALL ON TABLE chain_actions TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE chain_actions TO "home-automation";
+
+
+--
+-- Name: chains; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE chains FROM PUBLIC;
+REVOKE ALL ON TABLE chains FROM brett;
+GRANT ALL ON TABLE chains TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE chains TO "home-automation";
+
+
+--
+-- Name: clarifications; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE clarifications FROM PUBLIC;
+REVOKE ALL ON TABLE clarifications FROM brett;
+GRANT ALL ON TABLE clarifications TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE clarifications TO "home-automation";
+
+
+--
+-- Name: events; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE events FROM PUBLIC;
+REVOKE ALL ON TABLE events FROM brett;
+GRANT ALL ON TABLE events TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE events TO "home-automation";
+
+
+--
+-- Name: formalities; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE formalities FROM PUBLIC;
+REVOKE ALL ON TABLE formalities FROM brett;
+GRANT ALL ON TABLE formalities TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE formalities TO "home-automation";
+
+
+--
+-- Name: repeat; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE repeat FROM PUBLIC;
+REVOKE ALL ON TABLE repeat FROM brett;
+GRANT ALL ON TABLE repeat TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE repeat TO "home-automation";
+
+
+--
+-- Name: responses; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE responses FROM PUBLIC;
+REVOKE ALL ON TABLE responses FROM brett;
+GRANT ALL ON TABLE responses TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE responses TO "home-automation";
+
+
+--
+-- Name: rooms; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE rooms FROM PUBLIC;
+REVOKE ALL ON TABLE rooms FROM brett;
+GRANT ALL ON TABLE rooms TO brett;
+GRANT SELECT,INSERT,UPDATE ON TABLE rooms TO "home-automation";
+
+
+--
 -- PostgreSQL database dump complete
 --
 
