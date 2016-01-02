@@ -5,6 +5,14 @@ from recognition import ConvMode
 from time import sleep
 
 # TODO
+# Set up script
+    # Path to pocketsphinx
+    # Install postgres and python bindings
+    # Create automation database
+    # Create user home-automation
+    # Modify pg_hba.conf to require password for user on this database
+    # Add privileges for user on database
+    # Populate database
 # Figure out room/microphone separation
 # Actions
     # Facebook
@@ -55,6 +63,7 @@ def openDBConnection():
     Opens connection to the PostgreSQL automation database
     with user home-automation and password home-automation
     """
+    # TODO should password be randomly generated instead?
     pass
 
 def loadData():
@@ -67,16 +76,30 @@ openDBConnection()
 loadData()
 recognition.initSphinx()
 
+def handleAction(phrase):
+    """
+    Responsible for ensuring the passed-in phrase is handled correctly
+    and parsing the output of a given action, including getting missing information
+    """
+    actions.executeAction(phrase)
+    
 def parsePhrase(phrase):
+    """
+    Takes a spoken phrase and performs appropriate action based on current
+    state and environment
+    """
     # TODO will need to know room speech came from
     if conv_mode == ConvMode.LISTENING:
-        if name in phrase:
+        if MY_NAME in phrase:
             setConvMode(ConvMode.ACTIVE)
-            # TODO Parse command
-            pass
+            # Check that a command was given in addition to name
+            if phrase.count(' ') > 5:
+                handleAction(phrase)
+            else:
+                # TODO respond with greeting
+                pass
     elif conv_mode == ConvMode.ACTIVE:
-        # TODO Parse command
-        pass
+        handleAction(phrase)
     elif conv_mode == ConvMode.CONFIRMING:
         # TODO check for yes/no/affirming phrase
         pass
