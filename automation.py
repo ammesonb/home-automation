@@ -8,11 +8,15 @@ from time import sleep
 # Set up script
     # Path to pocketsphinx
     # Install postgres and python bindings
+    # Install curl
     # Create automation database
     # Create user home-automation
     # Modify pg_hba.conf to require password for user on this database
     # Add privileges for user on database
     # Populate database
+    # Select program name
+    # Choose whether/where to save recordings
+    # Enter Bluemix credentials
 # Figure out room/microphone separation
 # Actions
     # Facebook
