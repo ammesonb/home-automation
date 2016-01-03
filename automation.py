@@ -1,3 +1,6 @@
+import psycopg2
+import psycopg2.extras
+
 import recognition
 import actions
 import triggers
@@ -67,16 +70,34 @@ def openDBConnection():
     Opens connection to the PostgreSQL automation database
     with user home-automation and password home-automation
     """
-    # TODO should password be randomly generated instead?
-    pass
+    # TODO should password be randomly generated on setup instead?
+    try:
+        return psycopg2.connect("dbname='automation' user='home-automation' host='localhost' password='home-automation'")
+    except:
+        print "Unable to connect to the database"
+
+db = {}
+dbConn = openDBConnection()
+dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 def loadData():
     """
     Loads all information stored in database to global variables
     """
-    pass
+    global db
+    # Get local copies of actions, since need to know functions
+    # and such when triggering events (and have human names for logging purposes)
+    dbCursor.execute("SELECT * FROM actions")
+    db['actions'] = dbCursor.fetchall()
+    dbCursor.execute("SELECT * FROM events")
+    db['events'] = dbCursor.fetchall()
+    dbCursor.execute("SELECT * FROM chains")
+    db['chains'] = dbCursor.fetchall()
+    dbCursor.execute("SELECT * FROM chain_actions")
+    db['chain_actions'] = dbCursor.fetchall()
+    dbCursor.execute("SELECT * FROM keywords")
+    db['keywords'] = dbCursor.fetchall()
 
-openDBConnection()
 loadData()
 recognition.initSphinx()
 

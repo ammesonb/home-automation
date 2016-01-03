@@ -4,7 +4,7 @@ class Action():
         self.function = function
 
     def execute(self):
-        if !self.checkArguments(): return
+        if not self.checkArguments(): return
 
     def checkArguments(self):
         return True
