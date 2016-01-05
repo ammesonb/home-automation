@@ -1,23 +1,33 @@
 class Action():
-    def __init__(self, function):
+    def __init__(self):
         self.arguments = {}
-        self.function = function
+
+    def phraseMatch(self, phrase):
+        """
+        Actions must provide a method to check a given phrase to see
+        if it satisfies its base requirements, but not necessarily
+        fully parse it
+        """
+        return False
 
     def execute(self):
-        if not self.checkArguments(): return
+        """
+        Should check if arguments are valid and execute the action
+        Return a boolean indicating success
+        """
+        if not self.checkArguments(): return False
 
     def checkArguments(self):
-        return True
+        """
+        An inherited method that child classes should fill out
+        Returns an array of arguments keys that are missing and
+        must be provided to execute the action
+        """
+        return []
 
-    def provideMissingArguments(self):
-        pass
-
-def determineAction(phrase):
-    """
-    Uses keywords and actions loaded from database to determine
-    what should be done for a given phrase
-    Returns a dictionary with action database entry and parameters for the function
-    If not enough information, will set an error flag in the dict and provide
-    an error message
-    """
-    pass
+    def provideMissingArguments(self, args):
+        """
+        Update arguments for action using given dict
+        """
+        for arg in args.keys():
+            self.arguments[arg] = args[arg]

@@ -33,7 +33,7 @@ CREATE FUNCTION create_ts_range() RETURNS tsrange
     LANGUAGE plpgsql
     AS $$
 BEGIN
-return tsrange((select '2000-01-01 ' || to_char((select now()), 'HH:MI'))::timestamp, (select '2000-01-01 ' || to_char((select (now() + interval '1 minute')), 'HH:MI'))::timestamp);
+return tsrange((select '2000-01-01 ' || to_char((select now()), 'HH24:MI'))::timestamp, (select '2000-01-01 ' || to_char((select (now() + interval '1 minute')), 'HH24:MI'))::timestamp);
 END;
 $$;
 
@@ -543,7 +543,7 @@ ALTER TABLE ONLY wav ALTER COLUMN id SET DEFAULT nextval('wav_id_seq'::regclass)
 --
 
 COPY actions (id, action, function, trigger_word) FROM stdin;
-1	Set lights	setLights	light
+1	Set lights	ControlLights	light
 \.
 
 
@@ -641,10 +641,11 @@ SELECT pg_catalog.setval('formalities_id_seq', 5, true);
 --
 
 COPY greetings (id, phrase, time_of_day, formality) FROM stdin;
-2	Good morning	["2000-01-01 03:00:00","2000-01-01 11:59:00")	2
-3	Good afternoon	["2000-01-01 12:00:00","2000-01-01 16:59:00")	2
-4	Good evening	["2000-01-01 17:00:00","2000-01-01 23:59:00")	2
-5	Good day	["2000-01-01 00:00:00","2000-01-01 23:59:00")	2
+6	Good evening 	["2000-01-01 00:00:00","2000-01-01 03:00:00")	2
+2	Good morning	["2000-01-01 03:00:00","2000-01-01 12:00:00")	2
+3	Good afternoon	["2000-01-01 12:00:00","2000-01-01 17:00:00")	2
+4	Good evening	["2000-01-01 17:00:00","2000-01-01 23:59:59")	2
+5	Good day	["2000-01-01 08:00:00","2000-01-01 21:59:59")	2
 \.
 
 
@@ -652,7 +653,7 @@ COPY greetings (id, phrase, time_of_day, formality) FROM stdin;
 -- Name: greetings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brett
 --
 
-SELECT pg_catalog.setval('greetings_id_seq', 5, true);
+SELECT pg_catalog.setval('greetings_id_seq', 6, true);
 
 
 --
@@ -1017,7 +1018,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 REVOKE ALL ON TABLE actions FROM PUBLIC;
 REVOKE ALL ON TABLE actions FROM brett;
 GRANT ALL ON TABLE actions TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE actions TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE actions TO "home-automation";
 
 
 --
@@ -1027,7 +1028,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE actions TO "home-automation";
 REVOKE ALL ON TABLE chain_actions FROM PUBLIC;
 REVOKE ALL ON TABLE chain_actions FROM brett;
 GRANT ALL ON TABLE chain_actions TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE chain_actions TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE chain_actions TO "home-automation";
 
 
 --
@@ -1037,7 +1038,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE chain_actions TO "home-automation";
 REVOKE ALL ON TABLE chains FROM PUBLIC;
 REVOKE ALL ON TABLE chains FROM brett;
 GRANT ALL ON TABLE chains TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE chains TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE chains TO "home-automation";
 
 
 --
@@ -1047,7 +1048,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE chains TO "home-automation";
 REVOKE ALL ON TABLE clarifications FROM PUBLIC;
 REVOKE ALL ON TABLE clarifications FROM brett;
 GRANT ALL ON TABLE clarifications TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE clarifications TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE clarifications TO "home-automation";
 
 
 --
@@ -1057,7 +1058,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE clarifications TO "home-automation";
 REVOKE ALL ON TABLE events FROM PUBLIC;
 REVOKE ALL ON TABLE events FROM brett;
 GRANT ALL ON TABLE events TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE events TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE events TO "home-automation";
 
 
 --
@@ -1067,7 +1068,27 @@ GRANT SELECT,INSERT,UPDATE ON TABLE events TO "home-automation";
 REVOKE ALL ON TABLE formalities FROM PUBLIC;
 REVOKE ALL ON TABLE formalities FROM brett;
 GRANT ALL ON TABLE formalities TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE formalities TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE formalities TO "home-automation";
+
+
+--
+-- Name: greetings; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE greetings FROM PUBLIC;
+REVOKE ALL ON TABLE greetings FROM brett;
+GRANT ALL ON TABLE greetings TO brett;
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE greetings TO "home-automation";
+
+
+--
+-- Name: keywords; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE keywords FROM PUBLIC;
+REVOKE ALL ON TABLE keywords FROM brett;
+GRANT ALL ON TABLE keywords TO brett;
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE keywords TO "home-automation";
 
 
 --
@@ -1077,7 +1098,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE formalities TO "home-automation";
 REVOKE ALL ON TABLE repeat FROM PUBLIC;
 REVOKE ALL ON TABLE repeat FROM brett;
 GRANT ALL ON TABLE repeat TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE repeat TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE repeat TO "home-automation";
 
 
 --
@@ -1087,7 +1108,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE repeat TO "home-automation";
 REVOKE ALL ON TABLE responses FROM PUBLIC;
 REVOKE ALL ON TABLE responses FROM brett;
 GRANT ALL ON TABLE responses TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE responses TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE responses TO "home-automation";
 
 
 --
@@ -1097,7 +1118,17 @@ GRANT SELECT,INSERT,UPDATE ON TABLE responses TO "home-automation";
 REVOKE ALL ON TABLE rooms FROM PUBLIC;
 REVOKE ALL ON TABLE rooms FROM brett;
 GRANT ALL ON TABLE rooms TO brett;
-GRANT SELECT,INSERT,UPDATE ON TABLE rooms TO "home-automation";
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE rooms TO "home-automation";
+
+
+--
+-- Name: wav; Type: ACL; Schema: public; Owner: brett
+--
+
+REVOKE ALL ON TABLE wav FROM PUBLIC;
+REVOKE ALL ON TABLE wav FROM brett;
+GRANT ALL ON TABLE wav TO brett;
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE wav TO "home-automation";
 
 
 --

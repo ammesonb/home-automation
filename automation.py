@@ -4,6 +4,7 @@ import psycopg2.extras
 import recognition
 import actions
 import triggers
+from shared import say, getGreeting
 from recognition import ConvMode
 from time import sleep
 
@@ -16,6 +17,7 @@ from time import sleep
     # Create user home-automation
     # Modify pg_hba.conf to require password for user on this database
     # Add privileges for user on database
+    # GRANT INSERT, UPDATE, SELECT, TRIGGER ON ALL TABLES IN SCHEMA public TO "home-automation";
     # Populate database
     # Select program name
     # Choose whether/where to save recordings
@@ -106,14 +108,35 @@ def handleAction(phrase):
     Responsible for ensuring the passed-in phrase is handled correctly
     and parsing the output of a given action, including getting missing information
     """
-    actions.executeAction(phrase)
+    matches = []
+    for act in db['actions']:
+        # Check if potential match
+        if act['trigger_word'] in phrase:
+            obj = act['function']()
+            # If deeper analysis fails, ignore it
+            if not obj.phraseMatch(phrase):
+                continue
+            # Otherwise, add it to matches
+            else:
+                matches.append(obj)
+    if len(matches) > 1:
+        # TODO conflict resolution
+        pass
+    else:
+        obj = matches[0]
+        missingArgs = obj.checkArguments()
+        if len(missingArgs) == 0:
+            obj.execute()
+        else:
+            # TODO query missing arguments
+            pass
     
 def parsePhrase(phrase):
     """
     Takes a spoken phrase and performs appropriate action based on current
     state and environment
     """
-    # TODO will need to know room speech came from
+    # TODO will need to know room speech came from to direct output correctly
     if conv_mode == ConvMode.LISTENING:
         if MY_NAME in phrase:
             setConvMode(ConvMode.ACTIVE)
@@ -121,8 +144,9 @@ def parsePhrase(phrase):
             if phrase.count(' ') > 5:
                 handleAction(phrase)
             else:
-                # TODO respond with greeting
-                pass
+                message = getGreeting(dbCursor)
+                # TODO this will probably need an argument for output line
+                say(message)
     elif conv_mode == ConvMode.ACTIVE:
         handleAction(phrase)
     elif conv_mode == ConvMode.CONFIRMING:
@@ -141,7 +165,7 @@ def respond():
     """
     Determine appropriate response and say it
     """
-    # TODO will need to know room speech came from
+    # TODO will need to know room speech came from to direct output correctly
     pass
 
 def checkTriggers():
