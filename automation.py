@@ -58,7 +58,7 @@ MODE = "casual"
 # TODO Some arbitrary values, probably should check this
 MODE_CHANGE_TIMEOUT = 5000
 MAIN_LOOP_DELAY = 100
-last_mode_change = 0
+last_mode_change = 1
 
 def setConvMode(mode):
     global conv_mode
@@ -126,7 +126,12 @@ def handleAction(phrase):
         obj = matches[0]
         missingArgs = obj.checkArguments()
         if len(missingArgs) == 0:
-            obj.execute()
+            if not CONFIRM_ALL:
+                obj.execute()
+            else:
+                # TODO create string of intended action
+                # and inquire if it is correct
+                pass
         else:
             # TODO query missing arguments
             pass

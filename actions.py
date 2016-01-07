@@ -1,6 +1,7 @@
 class Action():
-    def __init__(self):
+    def __init__(self, keywords):
         self.arguments = {}
+        self.keywords = keywords
 
     def phraseMatch(self, phrase):
         """
@@ -9,6 +10,13 @@ class Action():
         fully parse it
         """
         return False
+
+    def parsePhrase(self, phrase):
+        """
+        Loads arguments from the given phrase
+        Abstract method
+        """
+        pass
 
     def execute(self):
         """
@@ -19,7 +27,7 @@ class Action():
 
     def checkArguments(self):
         """
-        An inherited method that child classes should fill out
+        An abstract method that child classes should fill out
         Returns an array of arguments keys that are missing and
         must be provided to execute the action
         """
@@ -31,3 +39,25 @@ class Action():
         """
         for arg in args.keys():
             self.arguments[arg] = args[arg]
+
+class ControlLights(Action):
+    # Args:
+    # Room
+    # Level OR Color
+    def phraseMatch(self, phrase):
+        """
+        Since this controls lights, really just needs to match any one keyword
+        """
+        for kw in self.keyword:
+            if kw in phrase:
+                return True
+        return False
+
+    def parsePhrase(self, phrase):
+        pass
+
+    def execute(self):
+        pass
+
+    def checkArguments(self):
+        pass
