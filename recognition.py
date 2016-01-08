@@ -19,6 +19,7 @@ def initSphinx():
     """
     Start CMU Sphinx recognizer/integration
     """
+    # TODO this
     pass
 
 def getSpeech():

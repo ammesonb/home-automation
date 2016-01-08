@@ -56,9 +56,13 @@ MY_NAME = "Proteus"
 CONFIRM_ALL = True
 MODE = "casual"
 # TODO Some arbitrary values, probably should check this
-MODE_CHANGE_TIMEOUT = 5000
 MAIN_LOOP_DELAY = 100
-last_mode_change = 1
+# Time in seconds before an incomplete command is aborted
+COMMAND_TIMEOUT = 5
+# This tracks the current action through calls
+# to keep state if insufficient arguments
+# are provided or confirmation needed
+currentAction = None
 
 def setConvMode(mode):
     global conv_mode
@@ -103,10 +107,9 @@ def loadData():
 loadData()
 recognition.initSphinx()
 
-def handleAction(phrase):
+def checkActions(phrase):
     """
-    Responsible for ensuring the passed-in phrase is handled correctly
-    and parsing the output of a given action, including getting missing information
+    Return a list of actions that could match the given phrase
     """
     matches = []
     for act in db['actions']:
@@ -119,20 +122,31 @@ def handleAction(phrase):
             # Otherwise, add it to matches
             else:
                 matches.append(obj)
-    if len(matches) > 1:
+    return matches
+
+def handleAction(phrase):
+    """
+    Responsible for ensuring the passed-in phrase is handled correctly
+    and parsing the output of a given action, including getting missing information
+    """
+    actions = checkActions(phrase)
+    if len(actions) > 1:
         # TODO conflict resolution
         pass
     else:
-        obj = matches[0]
+        obj = actions[0]
         missingArgs = obj.checkArguments()
         if len(missingArgs) == 0:
             if not CONFIRM_ALL:
                 obj.execute()
+                setConvMode(ConvMode.FINISHING)
             else:
+                setConvMode(ConvMode.REPROMPTING)
                 # TODO create string of intended action
                 # and inquire if it is correct
                 pass
         else:
+            setConvMode(ConvMode.REPROMPTING)
             # TODO query missing arguments
             pass
     
@@ -142,28 +156,47 @@ def parsePhrase(phrase):
     state and environment
     """
     # TODO will need to know room speech came from to direct output correctly
+    # TODO set as variable in current action?
     if conv_mode == ConvMode.LISTENING:
         if MY_NAME in phrase:
             setConvMode(ConvMode.ACTIVE)
             # Check that a command was given in addition to name
             if phrase.count(' ') > 5:
-                handleAction(phrase)
+                # Conversation state will be handled inside this function
+                return handleAction(phrase)
             else:
                 message = getGreeting(dbCursor)
                 # TODO this will probably need an argument for output line
                 say(message)
+                return None
     elif conv_mode == ConvMode.ACTIVE:
         handleAction(phrase)
     elif conv_mode == ConvMode.CONFIRMING:
-        # TODO check for yes/no/affirming phrase
-        pass
+        tone = getTone(phrase)
+        if tone == 'p':
+            # TODO have arguments been checked?
+            # Probably?
+            currentAction.execute()
+            setConvMode(ConvMode.FINISHING)
+        elif tone == 'n':
+            setConvMode(ConvMode.LISTENING)
+            return None
+        elif tone == 'u':
+            # TODO restate prompt
+            # TODO should this set mode reprompt?
+            # Maybe do a 3-miss-cancel, then need a counter
+            pass
     elif conv_mode == ConvMode.REPROMPTING:
         # TODO Continue or abort previous action
-        # TODO Need to know what that action is
         pass
     elif conv_mode == ConvMode.FINISHING:
-        # TODO Check if this is a new command or just a 'thank you'
-        # sort of response
+        actions = checkActions(phrase)
+        if len(actions) == 0:
+            setConvMode(ConvMode.LISTENING)
+            return None
+        else:
+            # TODO handle new action
+            pass
         pass
 
 def respond():
@@ -178,6 +211,7 @@ def checkTriggers():
     Check if any database trigger conditions are met
     and perform appropriate action if they are
     """
+    # TODO this
     pass
 
 def checkTimeouts():
@@ -185,21 +219,18 @@ def checkTimeouts():
     Check timeout for conversation mode and reprompt if necessary
     or cancel action
     """
+    # The action start time should be stored inside its object
+    # TODO this
     pass
 
 while True:
     # Check speech, act on it if necessary
     phrase = recognition.getSpeech()
     if phrase:
-        parsePhrase(phrase)
+        currentAction = parsePhrase(phrase)
 
+    # Check other conditions/states
     checkTriggers()
     checkTimeouts()
-    # TODO should this be threaded?
-    # Then maybe interrupts could be used instead of sleep?
-        # Shared DB connection? Bad?
-        # Conflicting choices - events and words, for instance?
-        # Shared variables such as timeouts?
-        # For hopefully-fast logic/decisions, is it really worth the overhead?
 
     sleep(MAIN_LOOP_DELAY)

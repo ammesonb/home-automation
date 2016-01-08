@@ -1,7 +1,10 @@
+from time import time
+
 class Action():
     def __init__(self, keywords):
         self.arguments = {}
         self.keywords = keywords
+        self.started = time()
 
     def phraseMatch(self, phrase):
         """
