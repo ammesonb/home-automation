@@ -14,6 +14,8 @@ class ConvMode(enum.Enum):
     # Listening for acknowledgement of completion
     # This can time out safely
     FINISHING = 5
+    # Allows a command to be modified
+    AMENDING = 6
 
 def initSphinx():
     """

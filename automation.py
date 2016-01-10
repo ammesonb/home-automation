@@ -54,7 +54,7 @@ from time import sleep
 # TODO Will pocketsphinx recognize this?
 MY_NAME = "Proteus"
 CONFIRM_ALL = True
-MODE = "casual"
+convMode = None
 # TODO Some arbitrary values, probably should check this
 MAIN_LOOP_DELAY = 100
 # Time in seconds before an incomplete command is aborted
@@ -65,9 +65,10 @@ COMMAND_TIMEOUT = 5
 currentAction = None
 
 def setConvMode(mode):
-    global conv_mode
-    conv_mode = mode
-    #recognition.conv_mode = ConvMode.LISTENING
+    global convMode
+    convMode = mode
+    shared.convMode = mode
+    #recognition.convMode = ConvMode.LISTENING
 
 setConvMode(ConvMode.LISTENING)
 
@@ -157,7 +158,7 @@ def parsePhrase(phrase):
     """
     # TODO will need to know room speech came from to direct output correctly
     # TODO set as variable in current action?
-    if conv_mode == ConvMode.LISTENING:
+    if convMode == ConvMode.LISTENING:
         if MY_NAME in phrase:
             setConvMode(ConvMode.ACTIVE)
             # Check that a command was given in addition to name
@@ -169,9 +170,9 @@ def parsePhrase(phrase):
                 # TODO this will probably need an argument for output line
                 say(message)
                 return None
-    elif conv_mode == ConvMode.ACTIVE:
+    elif convMode == ConvMode.ACTIVE:
         handleAction(phrase)
-    elif conv_mode == ConvMode.CONFIRMING:
+    elif convMode == ConvMode.CONFIRMING:
         tone = getTone(phrase)
         if tone == 'p':
             # TODO have arguments been checked?
@@ -180,23 +181,30 @@ def parsePhrase(phrase):
             setConvMode(ConvMode.FINISHING)
         elif tone == 'n':
             setConvMode(ConvMode.LISTENING)
-            return None
+            # TODO find a more elegant way to do this
+            if 'amend' in phrase or 'change' in phrase or 'modify' in phrase:
+                setConvMode(ConvMode.REPROMPTING)
+                return currentAction
+            else:
+                return None
         elif tone == 'u':
             # TODO restate prompt
-            # TODO should this set mode reprompt?
-            # Maybe do a 3-miss-cancel, then need a counter
             pass
-    elif conv_mode == ConvMode.REPROMPTING:
-        # TODO Continue or abort previous action
-        pass
-    elif conv_mode == ConvMode.FINISHING:
+    elif convMode == ConvMode.REPROMPTING:
+        currentAction.parsePhrase(phrase)
+        if len(currentAction.checkArguments()) == 0:
+            # TODO confirm phrase
+            setConvMode(ConvMode.CONFIRMING)
+        else:
+            # TODO Get new missing arguments
+            pass
+    elif convMode == ConvMode.FINISHING:
         actions = checkActions(phrase)
         if len(actions) == 0:
             setConvMode(ConvMode.LISTENING)
             return None
         else:
-            # TODO handle new action
-            pass
+            handleAction(phrase)
         pass
 
 def respond():

@@ -36,13 +36,6 @@ class Action():
         """
         return []
 
-    def provideMissingArguments(self, args):
-        """
-        Update arguments for action using given dict
-        """
-        for arg in args.keys():
-            self.arguments[arg] = args[arg]
-
 class ControlLights(Action):
     # Args:
     # Room
@@ -63,4 +56,9 @@ class ControlLights(Action):
         pass
 
     def checkArguments(self):
-        pass
+        # This only needs an amount since the room will default to
+        # the one in which the request was received
+        # While that may not have been the intended room, the request can then be
+        # amended
+        if self.arguments.has_key('amount'): return []
+        return ['amount']
