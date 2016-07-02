@@ -19,7 +19,6 @@ from time import sleep
     # Add privileges for user on database
     # GRANT INSERT, UPDATE, SELECT, TRIGGER ON ALL TABLES IN SCHEMA public TO "home-automation";
     # Populate database
-    # Select program name
     # Choose whether/where to save recordings
     # Enter Bluemix credentials
 # Figure out room/microphone separation
@@ -52,7 +51,7 @@ from time import sleep
         # OpenWRT associations/event handling?
 
 # TODO Will pocketsphinx recognize this?
-MY_NAME = "Proteus"
+MY_NAME = "M5"
 CONFIRM_ALL = True
 convMode = None
 # TODO Some arbitrary values, probably should check this
