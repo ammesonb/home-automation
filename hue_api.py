@@ -43,6 +43,6 @@ def getGroups():
     return json.loads(r.content)
 
 def changePower(kind, ident, state):
-    r = requests.put(hueAddr + '/{0}/{1}/state'.format(kind, ident), data=json.dumps({"on":state}))
+    r = requests.put(hueAddr + '/{0}/{1}/{2}'.format(kind, ident, 'state' if kind == 'lights' else 'action'), data=json.dumps({"on":state}))
     r = json.loads(r.content)[0]
     return r.has_key("success") and len(r['success']) > 0
