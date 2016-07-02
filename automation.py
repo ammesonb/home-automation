@@ -69,8 +69,6 @@ def setConvMode(mode):
     shared.convMode = mode
     #recognition.convMode = ConvMode.LISTENING
 
-setConvMode(ConvMode.LISTENING)
-
 def openDBConnection():
     """
     Opens connection to the PostgreSQL automation database
@@ -81,10 +79,6 @@ def openDBConnection():
         return psycopg2.connect("dbname='automation' user='home-automation' host='localhost' password='home-automation'")
     except:
         print "Unable to connect to the database"
-
-db = {}
-dbConn = openDBConnection()
-dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 def loadData():
     """
@@ -103,9 +97,6 @@ def loadData():
     db['chain_actions'] = dbCursor.fetchall()
     dbCursor.execute("SELECT * FROM keywords")
     db['keywords'] = dbCursor.fetchall()
-
-loadData()
-recognition.initSphinx()
 
 def checkActions(phrase):
     """
@@ -230,14 +221,24 @@ def checkTimeouts():
     # TODO this
     pass
 
-while True:
-    # Check speech, act on it if necessary
-    phrase = recognition.getSpeech()
-    if phrase:
-        currentAction = parsePhrase(phrase)
+if __name__ == "__main__":
+    setConvMode(ConvMode.LISTENING)
 
-    # Check other conditions/states
-    checkTriggers()
-    checkTimeouts()
+    db = {}
+    dbConn = openDBConnection()
+    dbCursor = dbConn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    sleep(MAIN_LOOP_DELAY)
+    loadData()
+    recognition.initSphinx()
+
+    while True:
+        # Check speech, act on it if necessary
+        phrase = recognition.getSpeech()
+        if phrase:
+            currentAction = parsePhrase(phrase)
+
+        # Check other conditions/states
+        checkTriggers()
+        checkTimeouts()
+
+        sleep(MAIN_LOOP_DELAY)
